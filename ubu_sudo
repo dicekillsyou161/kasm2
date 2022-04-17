@@ -1,0 +1,36 @@
+FROM kasmweb/core-ubuntu-bionic:1.10.0
+USER root
+
+ENV HOME /home/kasm-default-profile
+ENV STARTUPDIR /dockerstartup
+ENV INST_SCRIPTS $STARTUPDIR/install
+WORKDIR $HOME
+
+######### Customize Container Here ###########
+
+RUN apt-get update \
+    && apt-get install -y sudo wget gdebi zsh figlet toilet yakuake firefox screen \
+    && useradd -m -d /home/kasm-user -s /bin/bash kasm-user \
+    && echo 'kasm-user ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+    && wget -O discord.deb "https://discord.com/api/download?platform=linux&format=deb" \
+    && gdebi --n "discord.deb" \
+    && wget -O ohmyzsh.sh "https://raw.githubusercontent.com/loket/oh-my-zsh/feature/batch-mode/tools/install.sh" \
+    && chmod u+x ohmyzsh.sh \
+    && './ohmyzsh.sh' \
+    && chown -hR kasm-user '/home/kasm-default-profile/.oh-my-zsh' \
+    && wget "https://raw.githubusercontent.com/dicekillsyou161/kasm/main/zorthesosen.zsh-theme" \
+    && chown -hR kasm-user zorthesosen.zsh-theme \
+    && cp zorthesosen.zsh-theme '/home/kasm-default-profile/.oh-my-zsh/themes/zorthesosen.zsh-theme' \
+    && chgrp -hR kasm-user '/home/kasm-default-profile' \
+    && rm -rf /var/lib/apt/list/*
+
+######### End Customizations ###########
+
+RUN chown 1000:0 $HOME
+RUN $STARTUPDIR/set_user_permission.sh $HOME
+
+ENV HOME /home/kasm-user
+WORKDIR $HOME
+RUN mkdir -p $HOME && chown -R 1000:0 $HOME
+
+USER 1000
