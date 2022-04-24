@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+sudo rm -rf /var/log/mycroft # Log files
+rm -f /var/tmp/mycroft_web_cache.json # Configuration from Home.mycroft.ai
+rm -rf "${TMPDIR:-/tmp}/mycroft" # Temp files
+rm -rf "$HOME/.mycroft" # User level configuration
+sudo rm -rf /opt/mycroft # Mycroft Skills directory
+rm -rf "$HOME/mycroft-core" # Mycroft-core installation
